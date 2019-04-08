@@ -16,11 +16,11 @@ deterministic_component <- function(x, a, b, trans.func=NULL){
 # Stochastic component
 ## Assuming the noise if normally distributed around the expected value
 
-stochastic_component <- function(x, variance, add.noise=T){
-  sd <- sqrt(variance)
-  stoch.noise <- rnorm(length(x), 0, sd)
+stochastic_component <- function(x, variance, add.noise=T, params=NULL){
+  sdev <- sqrt(variance)
+  stoch.noise <- rnorm(length(x), 0, sdev)
   if (add.noise){
-    return(x + stoch.noise)
+    return(deterministic_component(x, params$a, params$b) + stoch.noise)
   } else
     return(stoch.noise)
 }
