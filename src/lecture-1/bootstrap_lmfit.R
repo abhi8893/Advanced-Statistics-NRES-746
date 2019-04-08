@@ -6,6 +6,10 @@
 
 
 # Function to calculate statistics on the bootsample
+# Returns an output df with columns: 
+# rsquared: Rsquared value (explained variance)
+# estimate: coefficient value corresponding to covariate chosen
+# coeff: cofficient name
 
 statfunc <- function(df, responsevar="Volume"){
   response <- df[, responsevar]
@@ -28,8 +32,9 @@ statfunc <- function(df, responsevar="Volume"){
 }
 
 # Function to bootstrap samples and apply a statfunc function
+# returns an output df equivalent to statfunc but for n.samples
 
-boot_sample <- function(df, statfunc, n.samples, n.stats, responsevar="Volume"){
+boot_sample <- function(df, statfunc=statfunc, n.samples=1000, n.stats=3, responsevar="Volume"){
   
   indices <- 1:nrow(df)
   output <- data.frame(matrix(NA, nrow=n.samples*2, ncol=n.stats))

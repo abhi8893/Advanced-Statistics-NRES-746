@@ -1,6 +1,7 @@
 ############################################################
 #####################** Description **######################
 # Analysis using the result of bootstrapped samples
+# Suited to adapt output of functions in bootstrap_lmfit.R
 ############################################################
 
 get.pval <- function(x){

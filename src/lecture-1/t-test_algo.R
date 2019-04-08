@@ -3,8 +3,6 @@
 # t-test ALGORITHMIC APPROACH
 ############################################################
 
-lots <- 10^6
-
 # Parametric Bootstrap
 ## 1.) Both samples are drawn from the same population - 
 ## 2.) Samples are drawn from populations with same mean, but different variance
