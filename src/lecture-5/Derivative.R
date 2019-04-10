@@ -1,6 +1,6 @@
 ############################################################
 #####################** Description **######################
 # Derivative based method
-# Testing the Newton-Raphson method to optimize
+# Testing the Newton-Raphson method to optimize!
 ############################################################
 
