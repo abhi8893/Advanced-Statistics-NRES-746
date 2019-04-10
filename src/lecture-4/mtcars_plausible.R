@@ -37,7 +37,7 @@ generate_data <- function(x, params){
   y_noise <- stochastic_component(x, variance = c)
   
   y_sim <- y_exp + y_noise
-  names(y_sim) <- xvals
+  names(y_sim) <- x
   return(y_sim)
 }
 

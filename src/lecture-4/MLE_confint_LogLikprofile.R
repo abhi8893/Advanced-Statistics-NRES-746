@@ -1,0 +1,62 @@
+############################################################
+#####################** Description **######################
+# MLE confidence intervals
+# Log Likelihood profile
+# Instead of fixing nuisance params at MLE 
+# and then examining the slice obtained for param of interest
+# We instead take the maximum for each value of nuisance param
+# and then examine the profiled likelihood obtained
+# (where nuisance params have been profiled out)
+############################################################
+
+source("src/lecture-4/MLE_mtcars_functions.R")
+
+# Data: mtcars
+## Exploring relationship b/w mpg and displacement
+## Exponential relationship, normally distributed errors
+## params : a, b, c
+
+
+params <- list(a=33, b=-0.002, c=1)
+
+MLE <- optim(fn=LogLikFunction, par = unlist(params), 
+             df=mtcars, yvar="mpg", xvar="disp",
+             control = list(fnscale=-1))
+
+# Let's assume variance c is known, a and b are the free params
+# Visualize likelihood surface in 2-dimensions
+# Basically we have partitioned our space into 500x500 points
+# For each combination of a,b 
+# we find the log-likelihood of a,b given the data and choice of the model
+allvals <- list(a=seq(5, 50, length=500), b=seq(-1/300, -1/800, length=500))
+loglikelihood_surface <- matrix(0, nrow=500, ncol=500)
+
+newParams <- MLE$par
+
+for (i in 1:length(allvals$a)){
+  newParams['a'] <- allvals$a[i]
+  for (j in 1:length(allvals$b)){
+    newParams['b'] <- allvals$b[j]
+    loglikelihood_surface[i, j] <- LogLikFunction(newParams, mtcars, "mpg", "disp")
+  }
+}
+
+# Plot the surface
+image(x=allvals$a, y=allvals$b, z=loglikelihood_surface, zlim=c(-100, -75), col=topo.colors(12))
+
+# 95% ci
+# 95% of the times our likelihood value at MLE must be 
+# greater than LogLik_MLE (evaluated at original estimate) - (chi-sq-critical_0.95)/2
+conf95 <- qchisq(0.95, 2)/2
+contour(x=allvals$a, y=allvals$b, z=loglikelihood_surface, 
+        levels=(MLE$value - conf95), add=T, lwd=3, col=gray(0.3))
+
+profile <- list()
+reasonable_parameter_values <- list()
+conf.ints <- list()
+# Param of interest: a
+# Nuisance param: b
+# Let's profile out b by taking max value of loglik accross the dim
+profile$a <- apply(loglikelihood_surface, 1, max)
+reasonable_parameter_values$a <- allvars$a[profile$a >= MLE$value - qchisq(0.95, 1)/2]
+conf.ints$a <- range(reasonable_parameter_values)
