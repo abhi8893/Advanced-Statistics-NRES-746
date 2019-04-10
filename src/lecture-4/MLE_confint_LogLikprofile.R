@@ -56,7 +56,61 @@ reasonable_parameter_values <- list()
 conf.ints <- list()
 # Param of interest: a
 # Nuisance param: b
-# Let's profile out b by taking max value of loglik accross the dim
+# Let's profile out b by taking max value of loglik accross the dimension of b
+# loglikelihood_surface is axb dimension.
+
 profile$a <- apply(loglikelihood_surface, 1, max)
-reasonable_parameter_values$a <- allvars$a[profile$a >= MLE$value - qchisq(0.95, 1)/2]
-conf.ints$a <- range(reasonable_parameter_values)
+
+# The True MLE parameter must be sampled from where the LL > MLE$value - qchisq(0.95, 1)/2
+reasonable_parameter_values$a <- allvals$a[profile$a >= MLE$value - qchisq(0.95, 1)/2]
+conf.ints$a <- range(reasonable_parameter_values$a)
+
+# Plot out the profile likelihood
+plot(allvals$a, profile$a, type="l", main="Log Likelihood profile", 
+     xlab="Parameter slice for \'a\'", ylab="Log Likelihood", xlim=c(15, 50))
+abline(v=MLE$par['a'], col="blue", lwd=3)
+abline(v=conf.ints$a[1], col='blue', lwd=1)
+abline(v=conf.ints$a[2], col="blue", lwd=1)
+abline(h=MLE$value-qchisq(0.95, 1)/2, col="blue", lty=2)
+
+# Make this into a function
+plot.loglikelihood <- function(method=c('slice', 'profile')){
+  
+}
+
+# Chug and repeat for parameter b
+# Param of interest: b
+# Nuisance param: b
+
+profile$b <- apply(loglikelihood_surface, 2, max)
+
+# The True MLE parameter must be sampled from where the LL > MLE$value - qchisq(0.95, 1)/2
+reasonable_parameter_values$b <- allvals$b[profile$b >= MLE$value - qchisq(0.95, 1)/2]
+conf.ints$b <- range(reasonable_parameter_values$b)
+
+# Plot out the profile likelihood
+plot(allvals$b, profile$b, type="l", main="Log Likelihood profile", 
+     xlab="Parameter slice for \'b\'", ylab="Log Likelihood")
+abline(v=MLE$par['b'], col="blue", lwd=3)
+abline(v=conf.ints$b[1], col='blue', lwd=1)
+abline(v=conf.ints$b[2], col="blue", lwd=1)
+abline(h=MLE$value-qchisq(0.95, 1)/2, col="blue", lty=2)
+
+
+# Compare Profile-likelihood v/s likelihood slice
+par(mfrow=c(2, 2))
+
+
+
+# Likelihood ratio test
+# Deviance D is chi-sq distributed with df=number of parameters that have been fixed
+# Basically you start with a simple model with n1 params
+# Then you start adding complexity to the model by adding more params r
+# So the complex model has params n2 = n1 + r
+# H0: The Complex doesn't add any useful information
+# i.e. The higher likelihood value obtained is just an artifact of random sampling 
+# simple = restricted model, complex = full model
+# D = -2(LL(simple) - LL(complex))
+
+## The rule of 2
+qchisq(0.95, 1)/2 # 1.92 (Close to 2)
