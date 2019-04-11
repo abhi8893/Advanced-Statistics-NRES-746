@@ -4,14 +4,15 @@
 ## Brute-force 
 ############################################################
 
+source("src/lecture-5/helper_funcs.R")
 library(emdbook)
 # Data: MyxoTiter_sum
 # Myxomatosis dataset
 MyxDat <- MyxoTiter_sum
 Myx <- subset(MyxDat, grade == 1)
+y <- Myx$titer
 
 # Some stats
-y <- Myx$titer
 mu.y <- mean(y)
 n.y <- length(y)
 var.y <- var(y)*(n.y-1/n.y)
@@ -27,11 +28,6 @@ hist(Myx$titer, freq=FALSE)
 # We want to fit a gamma distribution to it
 guess.params <- list(shape=40, scale=0.15)
 curve(dgamma(x, shape=guess.params$shape, scale=guess.params$scale), add=T, col="red")
-
-# Function for gamma likelihood
-Lik_gamma <- function(obs.data, params, log=T){
-  sum(dgamma(obs.data, shape=params['shape'], scale=params['scale'], log=log))
-}
 
 # Optimize to find the MLE
 MLE <- suppressWarnings(
