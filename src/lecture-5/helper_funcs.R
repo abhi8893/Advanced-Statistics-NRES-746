@@ -4,6 +4,7 @@
 ############################################################
 
 
+
 Lik_gamma <- function(obs.data, params, log=T){
   sum(dgamma(obs.data, shape=params['shape'], scale=params['scale'], log=log))
 }
