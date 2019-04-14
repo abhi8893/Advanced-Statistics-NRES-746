@@ -6,7 +6,9 @@
 
 
 Lik_gamma <- function(obs.data, params, log=T){
-  sum(dgamma(obs.data, shape=params['shape'], scale=params['scale'], log=log))
+  agg.func <- ifelse(log == T, sum, prod)
+  agg.func(dgamma(obs.data, shape=params['shape'], 
+                  scale=params['scale'], log=log))
 }
 
 get.MLE.titer <- function(){
