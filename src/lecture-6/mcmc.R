@@ -24,7 +24,7 @@ rbvn <- function(n, mean=c(0, 0),
                  rho=sigma[1, 2]/sqrt(prod(diag(sigma))),
                  sigma=matrix(c(1,0,0,1), nrow=2)){
   if(missing(sigma) & !missing(rho)){ # Nice functionality to check args! 
-    diag(sigma) <- rho
+    sigma[c(2, 3)] <- rho  # Implement function to get off-diagonal
   }
 
   x <- rnorm(n, mean[1], sqrt(sigma[1, 1]))
@@ -39,12 +39,12 @@ rbvn <- function(n, mean=c(0, 0),
 samples <- rbvn(1e4, rho=0.98)
 par(mfrow=c(3, 2))
 xlim <- c(-4, 4); ylim <- c(-4, 4)
-plot(samples, col=1:1e4)
-plot(samples, type="l")
-plot(ts(samples[, "x"]), ylab="x")
-plot(ts(samples[, "y"]), ylab="y")
-hist(samples[, "x"], main="Marginal distribution", xlab="x")
-hist(samples[, "y"], main="Marginal distribution", ylab="y")
+plot(samples, col=1:1e4, xlim=xlim, ylim=ylim)
+plot(samples, type="l", xlim=xlim, ylim=ylim)
+plot(ts(samples[, "x"]), ylab="x", ylim=xlim)
+plot(ts(samples[, "y"]), ylab="y", ylim=ylim)
+hist(samples[, "x"], main="Marginal distribution", xlab="x", xlim=xlim)
+hist(samples[, "y"], main="Marginal distribution", xlab="y", xlim=ylim)
 
 
 par(mfrow=c(1,1))
@@ -60,7 +60,7 @@ metropolisHastings <-
            thin=0, burn.in=0) {
     
     if(missing(sigma) & !missing(rho)){
-      diag(sigma) <- rho
+      sigma[c(2, 3)] <- rho
     }
     
     samples <- matrix(nrow=n, ncol=2)
@@ -108,12 +108,15 @@ metropolisHastings <-
 # TODO: Compare above and below plots with same xlim, ylim
 # Or foo[seq(1, length(foo), thin)]
 # Or foo[seq.int(1, length(foo), thin)]
+# TODO: Experiment with init.vals
+#       Generally tails are not being sampled
+#       if init.vals are too close to maximum posterior
 samples <- metropolisHastings(2e4, rho=0.98)
 colnames(samples) <- c("x", "y")
 par(mfrow=c(3, 2))
-plot(samples, col=1:1e4)
-plot(samples, type="l")
-plot(ts(samples[, "x"]), ylab="x")
-plot(ts(samples[, "y"]), ylab="y")
-hist(samples[, "x"], main="Marginal distribution", xlab="x")
-hist(samples[, "y"], main="Marginal distribution", ylab="y")
+plot(samples, col=1:1e4, xlim=xlim, ylim=ylim)
+plot(samples, type="l", xlim=xlim, ylim=ylim)
+plot(ts(samples[, "x"]), ylab="x", ylim=xlim)
+plot(ts(samples[, "y"]), ylab="y", ylim=ylim)
+hist(samples[, "x"], main="Marginal distribution", xlab="x", xlim=xlim)
+hist(samples[, "y"], main="Marginal distribution", xlab="y", xlim=ylim)
