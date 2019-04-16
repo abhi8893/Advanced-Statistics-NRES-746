@@ -120,3 +120,7 @@ plot(ts(samples[, "x"]), ylab="x", ylim=xlim)
 plot(ts(samples[, "y"]), ylab="y", ylim=ylim)
 hist(samples[, "x"], main="Marginal distribution", xlab="x", xlim=xlim)
 hist(samples[, "y"], main="Marginal distribution", xlab="y", xlim=ylim)
+
+# Always reset the par
+par(mfrow=c(1,1))
+
