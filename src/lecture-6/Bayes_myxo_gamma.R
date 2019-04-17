@@ -24,7 +24,8 @@ Lik_gamma <- function(obs.data, params, log=T){
 }
 
 # Find the MLE of shape and scale
-MLE <- optim(fn=Lik_gamma, par=params, obs.data=y, control=list(fnscale=-1))
+MLE <- suppressWarnings(
+  optim(fn=Lik_gamma, par=params, obs.data=y, control=list(fnscale=-1)))
 
 # Calculate the Likelihood2D surface for a discrete pixel space
 param.width <- c(shape=1e-1, scale=1e-3)
@@ -136,7 +137,7 @@ PosteriorRatio <- function(oldguess, newguess){
                             function(g) 
                               prod(c(Lik=Lik_gamma(y, g, log=F),
                                      prior=prior_gamma(g))))
-  posterior.probs <- setNames(unlist(posterior.probs), names(g))
+  posterior.probs <- setNames(unlist(posterior.probs), names(guesses))
   posterior.probs['old'] <- max(1e-90, posterior.probs['old'])
   post.rat <- as.numeric(posterior.probs['new']/posterior.probs['old'])
 
@@ -151,7 +152,7 @@ PosteriorRatio <- function(oldguess, newguess){
 #            Vary too much with init.vals.
 # Choose a starting point
 init.vals <- c(shape=40, scale=0.13)
-n.samples <- 1e4
+n.samples <- 3e4
 samples <- matrix(nrow=1e4, ncol=2)
 colnames(samples) <- names(param.vec)
 new.params <- c(shape=NULL, scale=NULL)
@@ -181,9 +182,10 @@ lines(samples, col="red")
 # TODO: Get name of dim by dim number
 marginalized <- lapply(c(1, 2), 
                        function(m) apply(Posterior2D, m, sum))
+names(marginalized) <- names(param.vec)
+
 marginalized.dens <- lapply(names(marginalized), 
                             function (n) marginalized[[n]]/param.width[n])
-names(marginalized) <- names(param.vec)
 names(marginalized.dens) <- names(param.vec)
 
 par(mfrow=c(2, 1))
@@ -198,10 +200,12 @@ par(mfrow=c(2, 1))
 i=0
 main.title <- "Posterior Metrolopolis MCMC vs brute-force"
 for (p in names(marginalized)){
-  hist(samples[, p], probability = T, xlab=p,
-       main=ifelse(i ==0, main.title, ""))
+  hist(samples[, p], probability = T, breaks=20, xlab=p,
+       main=ifelse(i ==0, main.title, ""), 
+       ylim=c(0, max(marginalized.dens[[p]])*1.2))
   lines(density(samples[, p]), col='green', lty=2)
   lines(param.vec[[p]], marginalized.dens[[p]], type='l', col='red')
+
   i = i + 1 # R doesn't have ++ or +=
   
 }

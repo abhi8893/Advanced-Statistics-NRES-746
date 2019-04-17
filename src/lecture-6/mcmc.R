@@ -51,7 +51,7 @@ par(mfrow=c(1,1))
 
 library(mvtnorm)
 
-metropolisHastings <-
+metropolis.bvn <-
   function(n,
            mean = c(0, 0),
            rho = sigma[1, 2] / sqrt(prod(diag(sigma))),
@@ -111,7 +111,7 @@ metropolisHastings <-
 # TODO: Experiment with init.vals
 #       Generally tails are not being sampled
 #       if init.vals are too close to maximum posterior
-samples <- metropolisHastings(2e4, rho=0.98)
+samples <- metropolis.bvn(2e4, rho=0.98)
 colnames(samples) <- c("x", "y")
 par(mfrow=c(3, 2))
 plot(samples, col=1:1e4, xlim=xlim, ylim=ylim)
